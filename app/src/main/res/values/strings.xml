@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SendFileToS3</string>
+    <string name="manage_upload">Manage uploads</string>
+    <string name="find_file">Find Files</string>
 </resources>
