@@ -6,14 +6,14 @@
   "CredentialsProvider": {
     "CognitoIdentity": {
       "Default": {
-        "PoolId": "us-east-1:5b40d123-1e1a-40ce-9d95-f46ed906501a",
+        "PoolId": "us-east-1:YOUR_POOL_ID",
         "Region": "us-east-1"
       }
     }
   },
   "S3TransferUtility": {
     "Default": {
-      "Bucket": "qclass-files-homo",
+      "Bucket": "BUCKET_NAME",
       "Region": "us-east-1"
     }
   }
