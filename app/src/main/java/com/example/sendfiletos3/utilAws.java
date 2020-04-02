@@ -5,17 +5,15 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobileconnectors.s3.transfermanager.TransferManager;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.example.sendfiletos3.menssage.ErrorEvent;
+import com.example.sendfiletos3.menssage.ProgressChangedEvent;
+import com.example.sendfiletos3.menssage.StateChangedEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -42,19 +40,17 @@ class utilAws {
             // Simply updates the UI list when notified.
             @Override
             public void onError(int id, Exception e) {
-                Log.e(TAG, "Error during upload: " + id, e);
-
-
+                EventBus.getDefault().post(new ErrorEvent(e.getMessage()));
             }
 
             @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-                Log.i(TAG, "PROGRESS .."+bytesCurrent);
+                EventBus.getDefault().post(new ProgressChangedEvent(id, bytesCurrent, bytesTotal));
             }
 
             @Override
             public void onStateChanged(int id, TransferState newState) {
-                Log.i(TAG, "NEW STATE .."+newState);
+                EventBus.getDefault().post(new StateChangedEvent(newState.toString()));
             }
         });
     }
