@@ -3,15 +3,19 @@ package com.example.sendfiletos3;
 import android.content.Context;
 import android.util.Log;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.Callback;
 import com.amazonaws.mobile.client.UserStateDetails;
+import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
+
+import org.json.JSONException;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -20,7 +24,7 @@ public class CognitoSetting {
 
     private static AmazonS3Client sS3Client;
     private static CognitoCachingCredentialsProvider sCredPorvider;
-    private static TransferUtility stransferUtility;
+    private static TransferUtility sTransferUtility;
     private static AWSCredentialsProvider sMobileClient;
 
     private static AWSCredentialsProvider getCredProvider (Context context) {
@@ -51,17 +55,36 @@ public class CognitoSetting {
     }
 
     public static AmazonS3Client getS3Client(Context context) {
+        ClientConfiguration configuration = new ClientConfiguration();
+        configuration.setMaxErrorRetry(3);
+        configuration.setConnectionTimeout(10000);
+        configuration.setSocketTimeout(120 * 1000);
+
         if(sS3Client == null) {
-            sS3Client = new AmazonS3Client(getCredProvider(context.getApplicationContext()));
-            sS3Client.setRegion(Region.getRegion(Regions.fromName("us-east-1")));
+            sS3Client = new AmazonS3Client(getCredProvider(context));
+            try {
+                //READ FILE res/raw/awsconfiguration.json
+                String regionString = new AWSConfiguration(context)
+                        .optJsonObject("S3TransferUtility")
+                        .getString("Region");
+                sS3Client.setRegion(Region.getRegion(regionString));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        sS3Client.setConfiguration(configuration);
         return sS3Client;
     }
 
     public static TransferUtility getStransferUtility(Context context) {
-        if(stransferUtility == null) {
-            stransferUtility = new TransferUtility(getS3Client(context.getApplicationContext()), context.getApplicationContext());
+        if(sTransferUtility == null) {
+            sTransferUtility = TransferUtility.builder()
+                    .context(context)
+                    .s3Client(getS3Client(context))
+                    .awsConfiguration(new AWSConfiguration(context))
+                    .build();
         }
-        return stransferUtility;
+        return sTransferUtility;
     }
 }

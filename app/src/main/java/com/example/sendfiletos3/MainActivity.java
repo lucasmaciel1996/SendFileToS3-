@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/arquivo.jpg");
+                File path = new File(Environment.getExternalStorageDirectory(),"filesLCM/video_1.mp4");//, arquivo.jpg
                 Log.d("FILE",""+path.getAbsolutePath());
 
 
