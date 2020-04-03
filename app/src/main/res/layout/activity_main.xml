@@ -57,5 +57,19 @@
         android:visibility="gone"
         android:background="@color/colorButton"
         android:text="@string/manage_upload" />
-
+    <TextView
+        android:id="@+id/txtv_powered"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:fontFamily="sans-serif"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:gravity="bottom"
+        android:hint="@string/txt_powered"
+        android:layout_marginTop="5sp"
+        android:layout_marginBottom="0sp"
+        android:textColor="@color/colorTag"
+        android:textColorHint="@color/colorTag"
+        android:layout_weight="0.45"
+        />
 </LinearLayout>

@@ -3,4 +3,5 @@
     <string name="manage_upload">Send File to S3 AWS</string>
     <string name="find_file">Find Files</string>
     <string name="txt_status">State</string>
+    <string name="txt_powered">Powered by Lucas Maciel</string>
 </resources>
