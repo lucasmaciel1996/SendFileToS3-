@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp" >
+    android:padding="20dp"
+    android:background="@color/colorPrimaryDark"
+    >
 
     <ImageView
         android:id="@+id/imv_img"
@@ -11,7 +13,7 @@
         android:background="@color/colorGreyPrimary"
         android:padding="5dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="3"
         />
     <TextView
         android:id="@+id/txtv_status"
@@ -24,29 +26,36 @@
         android:hint="@string/txt_status"
         android:layout_marginTop="5sp"
         android:layout_marginBottom="5sp"
-        android:textColor="@color/colorGreyPrimary"
+        android:textColor="@color/colorTag"
+        android:textColorHint="@color/colorTag"
         android:layout_weight="1"
         />
     <Button
         android:id="@+id/buttonFindMain"
         android:layout_width="match_parent"
         android:layout_height="0sp"
-        android:layout_weight="1"
+        android:layout_weight="0.73"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
+        android:textSize="21sp"
+        android:textColor="@color/colorText"
+        android:background="@color/colorButton"
         android:padding="20dp"
         android:text="@string/find_file" />
     <Button
         android:id="@+id/buttonUploadMain"
         android:layout_width="match_parent"
         android:layout_height="0sp"
-        android:layout_weight="1"
+        android:layout_weight="0.73"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:padding="20dp"
+        android:textSize="21sp"
+        android:textColor="@color/colorText"
         android:visibility="gone"
+        android:background="@color/colorButton"
         android:text="@string/manage_upload" />
 
 </LinearLayout>
