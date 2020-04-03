@@ -7,7 +7,9 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.example.sendfiletos3.menssage.ErrorEvent;
@@ -39,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private TransferUtility transferUtility;
     private utilAws utilAws;
     private TextView txt_status;
-    private static int RESULT_LOAD_IMAGE = 1;
-    private String selectedImagePath;
+    private static int RESULT_LOAD_FILE = 1;
+    private String filePath = null;
     private ImageView img;
 
     @Override
@@ -56,12 +59,41 @@ public class MainActivity extends AppCompatActivity {
         initUI();
 
     }
+    private void initUI() {
+        btnUpload = (Button) findViewById(R.id.buttonUploadMain);
+        btnFind = (Button) findViewById(R.id.buttonFindMain);
+        txt_status = (TextView) findViewById(R.id.txtv_status);
+        img = (ImageView) findViewById(R.id.imv_img);
+
+        btnFind.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                i.setType("video/*");
+                startActivityForResult(i, RESULT_LOAD_FILE);
+            }
+        });
+
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //File path = new File(Environment.getExternalStorageDirectory(),"filesLCM/video_1.mp4");//, arquivo.jpg
+                Log.d("FILE",""+filePath);
+
+
+                utilAws.beginUpload(filePath);
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == RESULT_LOAD_FILE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -70,9 +102,12 @@ public class MainActivity extends AppCompatActivity {
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
+            filePath = cursor.getString(columnIndex);
             cursor.close();
-            Log.e("FILE", picturePath);
+
+            Log.e("FILE", filePath);
+            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MICRO_KIND);
+            img.setImageBitmap(thumbnail);
             btnUpload.setVisibility(View.VISIBLE);
 
         }
@@ -90,37 +125,13 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    private void initUI() {
-        btnUpload = (Button) findViewById(R.id.buttonUploadMain);
-        btnFind = (Button) findViewById(R.id.buttonFindMain);
-        txt_status = (TextView) findViewById(R.id.txtv_status);
-
-        btnFind.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(
-                Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                i.setType("video/*, image/*");
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
-            }
-        });
-
-        btnUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                 File path = new File(Environment.getExternalStorageDirectory(),"filesLCM/video_1.mp4");//, arquivo.jpg
-                Log.d("FILE",""+path.getAbsolutePath());
-
-
-                utilAws.beginUpload(path.getAbsolutePath());
-            }
-        });
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStateChangedEvent(StateChangedEvent event) {
+        if(event.state == "COMPLETED") {
+            filePath = null;
+            btnUpload.setVisibility(View.GONE);
+            img.setImageBitmap(null);
+        }
         txt_status.setText(event.state);
     };
 
@@ -139,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         percent =  Float.parseFloat(df.format(percent).replace(",","."));
 
         Log.i("PROGRESS","ID"+ event.id+" BYTECURRENT "+event.bytesCurrent/1024+ " BYTETOTAL "+event.bytesTotal/1024+" %"+progres);
-        txt_status.setText("Enviado %"+ percent);
+        txt_status.setText("Enviado "+ percent +"%");
     };
 
 }

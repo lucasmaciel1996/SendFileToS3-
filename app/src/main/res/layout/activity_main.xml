@@ -8,7 +8,11 @@
     <ImageView
         android:id="@+id/imv_img"
         android:layout_width="match_parent"
-        android:layout_height="400sp"/>
+        android:background="@color/colorGreyPrimary"
+        android:padding="5dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        />
     <TextView
         android:id="@+id/txtv_status"
         android:layout_width="match_parent"
@@ -17,16 +21,17 @@
         android:textSize="24sp"
         android:textAlignment="center"
         android:gravity="center"
+        android:hint="@string/txt_status"
         android:layout_marginTop="5sp"
         android:layout_marginBottom="5sp"
-        android:background="@color/colorGreyPrimary"
+        android:textColor="@color/colorGreyPrimary"
         android:layout_weight="1"
         />
     <Button
         android:id="@+id/buttonFindMain"
         android:layout_width="match_parent"
         android:layout_height="0sp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
@@ -36,7 +41,7 @@
         android:id="@+id/buttonUploadMain"
         android:layout_width="match_parent"
         android:layout_height="0sp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
